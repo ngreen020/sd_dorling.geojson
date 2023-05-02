@@ -40,7 +40,7 @@ these.fips <- cw$fipscounty[these.msa]
 these.fips <- na.omit(these.fips)
 
 # Get San Diego
-sd.pop <- get_acs( 
+sdd.pop <- get_acs( 
   geography = "tract", 
   variables = "B01003_001", 
   state = "06", 
@@ -54,10 +54,10 @@ URL <- "https://github.com/DS4PS/cpp-529-master/raw/master/data/ltdb_std_2010_sa
 census.data <- readRDS(gzcon(url(URL)))
 
 # remove leading 0s
-sd.pop$GEOID<-sub( ".","", sd.pop$GEOID )
+sdd.pop$GEOID<-sub( ".","", sdd.pop$GEOID )
 
 # merge the pop data for san diego with the census data
-sdd <- merge( sd.pop, census.data, by.x="GEOID", by.y="tractid" )
+sdd <- merge( sdd.pop, census.data, by.x="GEOID", by.y="tractid" )
 
 # make sure there are no empty polygons
 sdd_merged <- sdd[ ! st_is_empty( sdd ), ]
@@ -227,15 +227,15 @@ x <- as.numeric( x )
 d0$tractid2 <- x 
 
 d0$tractid2 <- as.character(d0$tractid2)
-sdDorling <- merge(sdd_dorling, d0, by.x="GEOID", by.y="tractid2", all.x=T )
+sddDorling <- merge(sdd_dorling, d0, by.x="GEOID", by.y="tractid2", all.x=T )
 ```
 
 ```{r }
 
-row.ids <- sapply(slot(sdDorling, "polygons"), function(x) slot(x, "ID"))
-row.names(sdDorling) <- row.ids
+row.ids <- sapply(slot(sddDorling, "polygons"), function(x) slot(x, "ID"))
+row.names(sddDorling) <- row.ids
 
-sdDorling <- spTransform(sdDorling, CRS("+proj=longlat +datum=WGS84"))
+sddDorling <- spTransform(sddDorling, CRS("+proj=longlat +datum=WGS84"))
 
-geojson_write(sdDorling, file="sd_dorling.geojson", geometry="polygon")
+geojson_write(sddDorling, file="sd_dorling.geojson", geometry="polygon")
 ```
